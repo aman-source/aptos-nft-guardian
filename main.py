@@ -23,8 +23,8 @@ app.include_router(router, prefix="/api")
 @app.on_event("startup")
 async def startup_event():
     print("Loading ML model into memory...")
-    _ = ml_validator.model
-    _ = ml_validator.processor
+    # _ = ml_validator.model
+    # _ = ml_validator.processor
     print("ML model loaded.")
     print("Backend starting up...")
     await init_models()
