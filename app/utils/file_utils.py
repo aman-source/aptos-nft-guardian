@@ -19,7 +19,7 @@ async def upload_to_imgbb(file: UploadFile) -> str:
     params = {
         "key": IMGBB_API_KEY,
         "image": b64_image,
-        "expiration": '3600'
+        # "expiration": '3600'
     }
 
     async with httpx.AsyncClient() as client:
