@@ -21,6 +21,6 @@ app.include_router(router, prefix="/api")
 
 @app.on_event("startup")
 async def startup_event():
-    print("🚀 Backend starting up...")
+    print("Backend starting up...")
     await init_models()
     await ensure_collection_exists()

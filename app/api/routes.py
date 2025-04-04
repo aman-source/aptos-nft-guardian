@@ -25,10 +25,11 @@ async def mint(
     description: str = Form(...),
     label: str = Form(...),
     score: float = Form(...),
+    embedding: list = Form(...),
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        txn_hash = await mint_nft(receiver_address, name, description, image_url, label, score, db)
+        txn_hash = await mint_nft(receiver_address, name, description, image_url, label, score, embedding, db)
         return {
             "status": "success",
             "transaction_hash": txn_hash,
@@ -50,7 +51,6 @@ async def get_stats(db: AsyncSession = Depends(get_db)):
             "average_score": 0.0
         }
 
-    # Avoid division by zero
     average_score = (
         stats.total_score / stats.total_valid_mints if stats.total_valid_mints > 0 else 0.0
     )

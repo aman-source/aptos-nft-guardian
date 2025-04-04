@@ -1,6 +1,6 @@
 # app/db/models.py
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, func
+from sqlalchemy import ARRAY, Column, Integer, String, Float, DateTime, func
 from app.db.database import Base
 
 # Mint history table
@@ -15,6 +15,7 @@ class MintHistory(Base):
     image_url = Column(String)
     label = Column(String)
     score = Column(Float)
+    embedding = Column(ARRAY(Float))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 # Stats table

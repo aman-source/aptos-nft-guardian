@@ -65,6 +65,7 @@ async def mint_nft(
     image_url: str,
     label: str,
     score: float,
+    embedding: list,
     db: AsyncSession
 ) -> str:
     print(f"Minting NFT to: {receiver_address}")
@@ -96,7 +97,8 @@ async def mint_nft(
             txn_hash=txn_hash,
             image_url=image_url,
             label=label,
-            score=score
+            score=score,
+            embedding = embedding
         )
         db.add(mint_entry)
 
