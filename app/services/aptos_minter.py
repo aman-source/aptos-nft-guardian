@@ -90,7 +90,10 @@ async def mint_nft(
         else:
             print("Stats record not found in database.")
             
-        embedding = [float(e) for e in embedding]
+        if isinstance(embedding, list) and len(embedding) == 1:
+            embedding = [float(x.strip()) for x in embedding[0].strip('[]').split(',')]
+        else:
+            embedding = [float(e) for e in embedding]
 
         mint_entry = MintHistory(
             name=name,
