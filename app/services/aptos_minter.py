@@ -89,6 +89,8 @@ async def mint_nft(
             stats.total_score += score
         else:
             print("Stats record not found in database.")
+            
+        embedding = [float(e) for e in embedding]
 
         mint_entry = MintHistory(
             name=name,
