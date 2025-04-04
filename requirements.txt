@@ -1,7 +1,13 @@
 fastapi
 uvicorn
-python-multipart
-aiofiles
-pillow
-httpx
+python-dotenv
 aptos-sdk
+httpx
+pillow
+torch
+transformers
+aiofiles
+python-multipart
+ecdsa
+base58
+pydantic
