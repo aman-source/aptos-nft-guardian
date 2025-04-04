@@ -33,17 +33,26 @@ async def ensure_collection_exists():
         )
         print(f"Collection already exists: {collection_data['collection_name']}")
         return collection_data
+
     except Exception as e:
-        print("Collection does not exist. Creating new collection...")
-        txn_hash = await token_client.create_collection(
-            creator_account,
-            COLLECTION_NAME,
-            COLLECTION_DESCRIPTION,
-            COLLECTION_URI
-        )
-        await rest_client.wait_for_transaction(txn_hash)
-        print(f"Collection created! Txn: {txn_hash}")
-        return txn_hash
+        print("🚀 Collection does not exist. Creating new collection...")
+        try:
+            txn_hash = await token_client.create_collection(
+                creator_account,
+                COLLECTION_NAME,
+                COLLECTION_DESCRIPTION,
+                COLLECTION_URI
+            )
+            await rest_client.wait_for_transaction(txn_hash)
+            print(f"Collection created! Txn: {txn_hash}")
+            return txn_hash
+        except Exception as create_error:
+            if "ECOLLECTION_ALREADY_EXISTS" in str(create_error):
+                print("Collection already exists, skipping creation.")
+                return {"status": "already_exists"}
+            else:
+                raise create_error
+
 
 async def mint_nft(receiver_address: str, name: str, description: str, image_url: str):
     print(f"Minting NFT to: {receiver_address}")
