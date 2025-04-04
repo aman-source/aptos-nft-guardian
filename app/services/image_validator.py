@@ -12,7 +12,7 @@ from sqlalchemy import select
 from app.db.models import MintHistory
 
 
-async def is_duplicate(embedding, db, threshold=0.95):
+async def is_duplicate(embedding, db, threshold=0.8):
     query = select(MintHistory.embedding).where(MintHistory.embedding != None)
     result = await db.execute(query)
     existing_embeddings = result.scalars().all()
