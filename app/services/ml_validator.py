@@ -5,7 +5,7 @@ from PIL import Image
 from torchvision import transforms
 from transformers import CLIPProcessor, CLIPModel
 
-model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32",torch_dtype=torch.float16)
 processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 model.eval()
