@@ -6,6 +6,10 @@ from dotenv import load_dotenv
 from aptos_sdk.account import Account
 from aptos_sdk.aptos_tokenv1_client import AptosTokenV1Client
 from aptos_sdk.async_client import RestClient
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.database import get_db
+from app.db.models import Stats, MintHistory
+
 
 load_dotenv()
 
@@ -35,7 +39,7 @@ async def ensure_collection_exists():
         return collection_data
 
     except Exception as e:
-        print("🚀 Collection does not exist. Creating new collection...")
+        print("Collection does not exist. Creating new collection...")
         try:
             txn_hash = await token_client.create_collection(
                 creator_account,
@@ -54,18 +58,53 @@ async def ensure_collection_exists():
                 raise create_error
 
 
-async def mint_nft(receiver_address: str, name: str, description: str, image_url: str):
+async def mint_nft(
+    receiver_address: str,
+    name: str,
+    description: str,
+    image_url: str,
+    label: str,
+    score: float,
+    db: AsyncSession
+) -> str:
     print(f"Minting NFT to: {receiver_address}")
 
-    txn_hash = await token_client.create_token(
-        creator_account,
-        COLLECTION_NAME,
-        name,
-        description,
-        1,  # supply
-        image_url,
-        0   # royalty
-    )
-    await rest_client.wait_for_transaction(txn_hash)
-    print(f"NFT minted! Txn: {txn_hash}")
-    return txn_hash
+    try:
+        txn_hash = await token_client.create_token(
+            creator_account,
+            COLLECTION_NAME,
+            name,
+            description,
+            1,  # supply
+            image_url,
+            0   # royalty
+        )
+        await rest_client.wait_for_transaction(txn_hash)
+        print(f"NFT minted successfully. Transaction hash: {txn_hash}")
+
+        stats = await db.get(Stats, 1)
+        if stats:
+            stats.total_valid_mints += 1
+            stats.total_score += score
+        else:
+            print("Stats record not found in database.")
+
+        mint_entry = MintHistory(
+            name=name,
+            description=description,
+            creator_address=receiver_address,
+            txn_hash=txn_hash,
+            image_url=image_url,
+            label=label,
+            score=score
+        )
+        db.add(mint_entry)
+
+        await db.commit()
+
+        return txn_hash
+
+    except Exception as e:
+        print(f"Error during NFT minting: {str(e)}")
+        await db.rollback()
+        raise e
