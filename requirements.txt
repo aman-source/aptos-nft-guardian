@@ -11,3 +11,4 @@ python-multipart
 ecdsa
 base58
 pydantic
+torchvision
